@@ -1,72 +1,230 @@
+import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
-
-const chatContext = createContext();
-
-export const chatProvider = ({ children }) => {
-  const [message, setMessage] = useState([]);
+const ChatContext = createContext();
+export const ChatProvider = ({ children }) => {
+  const [messages, setMessages] = useState([]);
   const [prompt, setPrompt] = useState("");
-  const [newLoading, setNewLoading] = useState(false);
+  const [newRequestLoading, setNewRequestLoading] = useState(false);
 
-  const fetchResponse = async () => {
-    if (prompt === "") return alert("please write a prompt");
-    setNewLoading(true);
-    setPrompt("");
+  async function fetchResponse() {
     try {
-      const response = await axios.post(`${process.env.GEMINI}`, {
-        data: {
-          contents: [
+        if(prompt === "")
+            return;
+        
+        // Ensure we have a selected chat
+        if (!selected) {
+            toast.error("Please select or create a chat first");
+            return;
+        }
+            
+        setNewRequestLoading(true);
+
+        const response = await axios({
+            url: `${import.meta.env.VITE_GEMINI}`,
+            method: "post",
+            data: {
+                contents: [{ parts: [{ text: prompt }] }]
+            }
+        });
+
+        const question = prompt;
+        setPrompt("");
+
+        const answer = response.data.candidates[0].content.parts[0].text;
+
+        // Update UI immediately with new message
+        setMessages((prev) => {
+            const prevMessages = Array.isArray(prev) ? prev : [];
+            return [...prevMessages, { 
+                question: question, 
+                answer: answer 
+            }];
+        });
+        
+        // Send to your backend
+        const { data } = await axios.post(
+            `${import.meta.env.VITE_SERVER}chat/${selected}`,
             {
-              parts: [{ text: prompt }],
+                questions: question,
+                answers: answer
             },
-          ],
-        },
-      });
-      const mess = {
-        questions: prompt,
-        answers:
-          response["data"]["candidates"][0]["content"]["parts"][0]["text"],
-      };
-      setMessage((prev) => [...prev, mess]);
-      setNewLoading(false);
-    } catch (e) {
-      toast.error("Something went wrong");
-      console.error(e);
-      setNewLoading(false);
+            {
+                headers:{
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                }
+            }
+        );
+        
+        setNewRequestLoading(false);
+    } catch (error) {
+        console.error("Error details:", error);
+        toast.error(error.response?.data?.message || "Failed to generate response");
+        setNewRequestLoading(false);
     }
-  };
+  }
 
   const [chats, setChats] = useState([]);
-  const fetchChats = () => {
+
+  const [selected, setSelected] = useState(null);
+
+  async function fetchChats() {
     try {
-      const { data } = axios.get(`${process.env.SERVER}/chat/all`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      setChats((prev) => [...prev, data]);
-    } catch (e) {
-      console.log(e);
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_SERVER}chat/all`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      // Make sure data is an array
+      const chatsArray = Array.isArray(data) ? data : [];
+      setChats(chatsArray);
+
+      // Only set selected if there are items
+      if (chatsArray.length > 0) {
+        setSelected(chatsArray[0]._id);
+      }
+    } catch (error) {
+      console.error("Fetch chats error:", error);
+      toast.error("Failed to load chats");
+      // Set to empty array on error
+      setChats([]);
     }
+  }
+
+  const [createLod, setCreateLod] = useState(false);
+  async function createChat() {
+    setCreateLod(true);
+    try {
+      console.log("API URL:", `${import.meta.env.VITE_SERVER}chat/new`);
+
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_SERVER}chat/new`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      console.log("Create chat response:", data);
+      await fetchChats();
+      
+      // Set the newly created chat as selected
+      if (data && data._id) {
+        setSelected(data._id);
+      }
+      
+      setCreateLod(false);
+      toast.success("New chat created successfully");
+    } catch (error) {
+      console.log("Create chat error:", error);
+      console.log("Error response:", error.response);
+      setCreateLod(false);
+      toast.error("Something went wrong with the creation of a new chat");
+    }
+  }
+
+  const [loading, setLoading] = useState(false);
+
+  const fetchMessages = async () => {
+    if (!selected) {
+      setMessages([]);
+      return;
+    }
+    
+    setLoading(true);
+    try {
+        const { data } = await axios.get(`${import.meta.env.VITE_SERVER}chat/${selected}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+        });
+        
+        // Check if data contains the conversation array
+        if (data && data.conversation && Array.isArray(data.conversation)) {
+            // Map the backend data structure to match your frontend component's expected structure
+            const formattedMessages = data.conversation.map(item => ({
+                question: item.questions,
+                answer: item.answers
+            }));
+            setMessages(formattedMessages);
+        } else {
+            setMessages([]);
+        }
+    } catch (error) {
+        console.error("Fetch messages error:", error);
+        setMessages([]);
+        if (error.response?.status === 404) {
+            toast.error("Chat not found");
+        } else if (error.response?.data?.message !== "No conversation found") {
+            toast.error("Failed to load messages");
+        }
+    } finally {
+        setLoading(false);
+    }   
   };
 
+  async function deleteChat(id) {
+    try {
+      const { data } = await axios.delete(
+        `${import.meta.env.VITE_SERVER}chat/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      toast.success(data.message);
+      await fetchChats();
+      // Don't reload the page, just reset the selected chat if needed
+      if (selected === id) {
+        setSelected(chats.length > 0 ? chats[0]._id : null);
+      }
+    } catch (error) {
+      console.error("Delete chat error:", error);
+      toast.error("Failed to delete chat");
+    }
+  }
+
   useEffect(() => {
-    fetchChats;
+    fetchChats();
   }, []);
 
+  useEffect(() => {
+    if (selected) {
+      fetchMessages();
+    } else {
+      setMessages([]);
+    }
+  }, [selected]);
+
   return (
-    <chatContext.Provider
+    <ChatContext.Provider
       value={{
         fetchResponse,
-        message,
+        messages,
         prompt,
         setPrompt,
-        newLoading,
-        setChats,
+        newRequestLoading,
+        chats,
+        createChat,
+        createLod,
+        selected,
+        setSelected,
+        loading,
+        setLoading,
+        deleteChat,
+        fetchChats,
       }}
     >
       {children}
-    </chatContext.Provider>
+    </ChatContext.Provider>
   );
 };
 
-export const chatData = () => useContext(chatContext);
+export const ChatData = () => useContext(ChatContext);

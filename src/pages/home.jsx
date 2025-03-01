@@ -3,7 +3,7 @@ import SideBar from '../component/SideBar'
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import Header from '../component/Header';
-import { chatData } from '../context/ChatContext';
+import { ChatData } from '../context/ChatContext';
 import { CgProfile } from "react-icons/cg";
 import { BsRobot } from "react-icons/bs";
 import { LoadingSmall, LoadingBig } from "../component/Loading";
@@ -16,41 +16,43 @@ const Home = () => {
     setIsOpen(!isOpen);
   };
 
-  const { fetchResponse, messages, prompt, setPrompt, newRequestLoading, loading, chats } = chatData();
-
+  const { fetchResponse, messages, prompt, setPrompt, newRequestLoading, loading, chats, selected } = ChatData();
 
   const submitHandler = (e) => {
     e.preventDefault();
-    fetchResponse();
+    if (prompt.trim()) {
+      fetchResponse();
+    }
   }
 
   const messageContainerRef = useRef();
 
-  useEffect(()=>{
-    if(messageContainerRef.current){
+  useEffect(() => {
+    if (messageContainerRef.current) {
       messageContainerRef.current.scrollTo({
         top: messageContainerRef.current.scrollHeight,
         behavior: "smooth"
       });
     }
-  },[messages])
+  }, [messages]);
   
   return (
     <div className="flex h-screen bg-gray-900 text-white">
-      <SideBar isOpen={isOpen} toggleSideBar={toggleSideBar}/>
+      <SideBar isOpen={isOpen} toggleSideBar={toggleSideBar} />
 
       <div className='flex flex-1 flex-col'>
         <button
           onClick={toggleSideBar}
-          className="md:hidden p-4 bg-gray-800 text-2xl fixed top-4 right-4">
+          className="md:hidden p-4 bg-gray-800 text-2xl fixed top-4 right-4 z-10">
           {isOpen ? <IoCloseCircleSharp /> : <GiHamburgerMenu />}
         </button>
 
         <div className='flex-1 p-6 mb-20 md:mb-0'>
           <Header />
           {
-            loading? <LoadingBig /> : <div className='flex-1 p-6 max-h-[600px] overflow-y-auto mb-20 md:mb-0 thin-scrollbar'
-            ref={messageContainerRef}>
+            loading ? <LoadingBig /> : 
+            <div className='flex-1 p-6 max-h-[600px] overflow-y-auto mb-20 md:mb-0 thin-scrollbar'
+              ref={messageContainerRef}>
               {
                 messages && messages.length > 0 ? messages.map((e, i) => {
                   return (
@@ -68,11 +70,11 @@ const Home = () => {
                         </div>
                         {e.answer}
                       </div>
-  
-  
                     </div>
                   )
-                }) : <p>No Chat Yet</p>
+                }) : 
+                selected ? <p>No messages in this chat yet. Start a conversation!</p> :
+                <p>No chat selected. Please create or select a chat to start.</p>
               }
   
               {newRequestLoading && <LoadingSmall />}
@@ -81,27 +83,30 @@ const Home = () => {
         </div>
       </div>
 
-      { 
-  !isOpen && chats && chats.length === 0 ? null : 
-  !isOpen && (
-    <div className='fixed bottom-0 right-0 left-auto p-4 w-full md:w-3/4'>
-      <form onClick={submitHandler} className="flex justify-center items-center">
-        <input
-          className='flex-grow p-4 bg-gray-500 rounded-l text-white outline-none'
-          type="text"
-          placeholder='Enter a prompt here'
-          value={prompt}
-          onChange={e => setPrompt(e.target.value)}
-          required
-        />
-        <button className="p-4 bg-gray-600 rounded-r text-2xl text-white">
-          <IoMdSend />
-        </button>
-      </form>
-    </div>
-  )
-}
-
+      {
+        !isOpen && (!chats || chats.length === 0) ? null :
+        !isOpen && (
+          <div className='fixed bottom-0 right-0 left-0 md:left-auto p-4 w-full md:w-3/4'>
+            <form onSubmit={submitHandler} className="flex justify-center items-center">
+              <input
+                className='flex-grow p-4 bg-gray-500 rounded-l text-white outline-none'
+                type="text"
+                placeholder='Enter a prompt here'
+                value={prompt}
+                onChange={e => setPrompt(e.target.value)}
+                disabled={!selected || newRequestLoading}
+                required
+              />
+              <button 
+                type="submit"
+                disabled={!prompt.trim() || !selected || newRequestLoading}
+                className="p-4 bg-gray-600 rounded-r text-2xl text-white disabled:opacity-50">
+                <IoMdSend />
+              </button>
+            </form>
+          </div>
+        )
+      }
     </div>
   )
 }
