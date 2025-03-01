@@ -3,12 +3,12 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserData } from '../context/UserContext';
 import { LoadingSpinner } from '../component/Loading';
-import { ChatData } from '../context/ChatContext';
+import { chatData } from '../context/ChatContext.jsx';
 
 const Verify = () => {
   const [otp, setOtp] = useState("");
 
-  const { fetchChats } = ChatData();
+  const { fetchChats } = chatData();
   const { verifyUser, btnLoading } = UserData();
 
   const navigate = useNavigate();

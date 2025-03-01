@@ -4,7 +4,6 @@ import toast, { Toaster } from "react-hot-toast";
 
 const UserContext = createContext();
 export const UserProvider = ({ Children }) => {
-
   const [loading, setloading] = useState(false);
 
   async function login(email, navigate) {
@@ -50,26 +49,26 @@ export const UserProvider = ({ Children }) => {
     }
   }
 
-  const fetchUser = async () =>{
-    try{
-      const token = localStorage.getItem('token');
+  const fetchUser = async () => {
+    try {
+      const token = localStorage.getItem("token");
       setloading(true);
 
-      if(!token) return toast.error("not found");
+      if (!token) return toast.error("not found");
       const { data } = await axios.get(`${process.env.SERVER}user/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setIsAuth(true);
       setUser(data);
-    }catch(e){
+    } catch (e) {
       toast.error(e.response.data.message);
       setloading(false);
     }
-  }
+  };
 
   useEffect(() => {
     fetchUser();
-  },[]);
+  }, []);
 
   return (
     <UserContext.Provider

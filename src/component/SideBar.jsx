@@ -1,4 +1,4 @@
-import { ChatData } from "../context/ChatContext";
+import { chatData } from "../context/ChatContext";
 import { MdDelete } from "react-icons/md";
 import { LoadingSpinner } from "./Loading";
 import toast from "react-hot-toast";
@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 const SideBar = ({ isOpen, toggleSideBar }) => {
     const { Logout } = UserData();
-    const { chats, createChat, createLod, setSelected, deleteChat } = ChatData();
+    const { chats, createChat, createLod, setSelected, deleteChat } = chatData();
     const deleteChatHandler = (id) => {
         const userConfirmed = window.confirm("Are you sure you want to delete this chat?");
         if (userConfirmed) {
