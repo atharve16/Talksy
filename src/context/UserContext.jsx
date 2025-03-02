@@ -12,11 +12,11 @@ export const UserProvider = ({ children }) => {
   async function loginUser(email, navigate) {
     setBtnLoading(true);
     try {
-      console.log("Login URL:", `${import.meta.env.VITE_SERVER}/api/user/login`);
+      console.log("Login URL:", `https://talksy-backend-code.onrender.com/api/user/login`);
       console.log("Sending email:", email);
 
       const { data } = await axios.post(
-        `${import.meta.env.VITE_SERVER}/api/user/login`,
+        `https://talksy-backend-code.onrender.com/api/user/login`,
         { email }
       );
 
@@ -46,7 +46,7 @@ export const UserProvider = ({ children }) => {
 
     try {
       const { data } = await axios.post(
-        `${import.meta.env.VITE_SERVER}/api/user/verify`,
+        `https://talksy-backend-code.onrender.com/api/user/verify`,
         { verifyToken, otp }
       );
       toast.success(data.message);
@@ -66,7 +66,7 @@ export const UserProvider = ({ children }) => {
   async function fetchUser() {
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_SERVER}/api/user/me`,
+        `https://talksy-backend-code.onrender.com/api/user/me`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

@@ -21,7 +21,7 @@ export const ChatProvider = ({ children }) => {
         setNewRequestLoading(true);
 
         const response = await axios({
-            url: `${import.meta.env.VITE_GEMINI}`,
+            url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyDY89blkwL0rEMtnlNND-dygtpwl2z1BDM',
             method: "post",
             data: {
                 contents: [{ parts: [{ text: prompt }] }]
@@ -44,7 +44,7 @@ export const ChatProvider = ({ children }) => {
         
         // Send to your backend
         const { data } = await axios.post(
-            `${import.meta.env.VITE_SERVER}/api/chat/${selected}`,
+            `https://talksy-backend-code.onrender.com/api/chat/${selected}`,
             {
                 questions: question,
                 answers: answer
@@ -71,7 +71,7 @@ export const ChatProvider = ({ children }) => {
   async function fetchChats() {
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_SERVER}/api/chat/all`,
+        `https://talksy-backend-code.onrender.com/api/chat/all`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -99,10 +99,10 @@ export const ChatProvider = ({ children }) => {
   async function createChat() {
     setCreateLod(true);
     try {
-      console.log("API URL:", `${import.meta.env.VITE_SERVER}/api/chat/new`);
+      console.log("API URL:", `https://talksy-backend-code.onrender.com/api/chat/new`);
 
       const { data } = await axios.post(
-        `${import.meta.env.VITE_SERVER}/api/chat/new`,
+        `https://talksy-backend-code.onrender.com/api/chat/new`,
         {},
         {
           headers: {
@@ -139,7 +139,7 @@ export const ChatProvider = ({ children }) => {
     
     setLoading(true);
     try {
-        const { data } = await axios.get(`${import.meta.env.VITE_SERVER}/api/chat/${selected}`, {
+        const { data } = await axios.get(`https://talksy-backend-code.onrender.com/api/chat/${selected}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
@@ -172,7 +172,7 @@ export const ChatProvider = ({ children }) => {
   async function deleteChat(id) {
     try {
       const { data } = await axios.delete(
-        `${import.meta.env.VITE_SERVER}/api/chat/${id}`,
+        `https://talksy-backend-code.onrender.com/api/chat/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
