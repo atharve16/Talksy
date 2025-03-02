@@ -51,18 +51,18 @@ const Home = () => {
       <div className="flex flex-1 flex-col relative">
         <button
           onClick={toggleSideBar}
-          className="md:hidden p-4 text-2xl fixed top-4 right-4 z-10 bg-white bg-opacity-80 backdrop-blur-sm rounded-full shadow-lg transition-all duration-300 hover:bg-slate-100 text-slate-600"
+          className="md:hidden p-3 text-2xl fixed top-4 right-4 z-10 bg-white bg-opacity-80 backdrop-blur-sm rounded-full shadow-lg transition-all duration-300 hover:bg-slate-100 text-blue-500"
         >
           {isOpen ? <IoCloseCircleSharp /> : <GiHamburgerMenu />}
         </button>
 
-        <div className="flex-1 p-4 md:p-6 pb-28 relative">
+        <div className="flex-1 p-3 md:p-4 pb-24 relative">
           <Header />
           {loading ? (
             <LoadingBig />
           ) : (
             <div
-              className="flex-1 p-4 max-h-[calc(100vh-240px)] overflow-y-auto thin-scrollbar message-container"
+              className="flex-1 p-3 sm:max-h-[calc(115vh-220px)] max-h-[calc(105vh-220px)] overflow-y-auto thin-scrollbar message-container"
               ref={messageContainerRef}
             >
               {messages && messages.length > 0 ? (
@@ -70,21 +70,21 @@ const Home = () => {
                   return (
                     <div
                       key={i}
-                      className="mb-6 message-animate"
+                      className="mb-5 message-animate"
                       style={{ animationDelay: `${i * 0.1}s` }}
                     >
-                      <div className="mb-4 p-5 rounded-lg user-message flex items-start gap-3">
-                        <div className="avatar flex items-center justify-center rounded-full p-2 h-10 w-10">
-                          <CgProfile className="text-xl" />
+                      <div className="mb-3 p-4 rounded-lg user-message flex items-start gap-3 bg-blue-50">
+                        <div className="avatar flex items-center justify-center rounded-full h-10 w-10 bg-blue-100">
+                          <CgProfile className="text-xl text-blue-600" />
                         </div>
                         <div className="flex-1 break-words message-text">
                           {e.question}
                         </div>
                       </div>
 
-                      <div className="mb-4 p-5 rounded-lg bot-message flex items-start gap-3">
-                        <div className="avatar bot-avatar flex items-center justify-center rounded-full p-2 h-10 w-10">
-                          <BsRobot className="text-xl" />
+                      <div className="mb-3 p-4 rounded-lg bot-message flex items-start gap-3 bg-slate-50">
+                        <div className="avatar bot-avatar flex items-center justify-center rounded-full p-2 h-10 w-10 bg-slate-200">
+                          <BsRobot className="text-xl text-slate-700" />
                         </div>
                         <div className="flex-1 break-words message-text">
                           {e.answer}
@@ -95,8 +95,8 @@ const Home = () => {
                 })
               ) : selected ? (
                 <div className="flex items-center justify-center h-64 text-center">
-                  <div className="empty-state p-8 backdrop-blur-sm transform transition-all duration-500 hover:scale-105">
-                    <div className="text-6xl mb-4 text-slate-400">
+                  <div className="empty-state p-6 backdrop-blur-sm transform transition-all duration-500 hover:scale-105 bg-white bg-opacity-80 rounded-lg shadow-sm">
+                    <div className="text-6xl mb-3 text-blue-400">
                       <BsRobot className="mx-auto animate-pulse" />
                     </div>
                     <p className="text-xl text-slate-700 font-semibold">
@@ -109,7 +109,7 @@ const Home = () => {
                 </div>
               ) : (
                 <div className="flex items-center justify-center h-64 text-center">
-                  <div className="empty-state p-8 backdrop-blur-sm transform transition-all duration-500 hover:scale-105">
+                  <div className="empty-state p-6 backdrop-blur-sm transform transition-all duration-500 hover:scale-105 bg-white bg-opacity-80 rounded-lg shadow-sm">
                     <p className="text-xl text-slate-700 font-semibold">
                       No chat selected.
                     </p>
@@ -126,16 +126,20 @@ const Home = () => {
         </div>
 
         {/* Always render the input container, but make it conditionally visible */}
-        <div 
-          className={`fixed bottom-0 right-0 left-0 md:left-auto p-4 w-full md:w-3/4 md:pr-8 z-10 
-                     transition-opacity duration-300 ${(!selected || isOpen) ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+        <div
+          className={`fixed bottom-5 right-0 left-0 md:left-auto p-4 w-full md:w-3/4 md:pr-6 z-10 
+             transition-opacity duration-300 ${
+               !selected || isOpen
+                 ? "opacity-0 pointer-events-none"
+                 : "opacity-100"
+             }`}
         >
           <form
             onSubmit={submitHandler}
-            className="flex justify-center items-center bg-white bg-opacity-90 backdrop-blur-sm rounded-full shadow-lg overflow-hidden prompt-container"
+            className="flex justify-center items-center bg-white bg-opacity-90 backdrop-blur-sm rounded-full shadow-lg overflow-hidden prompt-container border border-slate-100"
           >
             <input
-              className="flex-grow bg-transparent outline-none glow-input prompt-input p-4"
+              className="flex-grow bg-transparent outline-none glow-input prompt-input p-3 px-5"
               type="text"
               placeholder="Enter your message here..."
               value={prompt}
@@ -146,7 +150,7 @@ const Home = () => {
             <button
               type="submit"
               disabled={!prompt.trim() || !selected || newRequestLoading}
-              className="text-white disabled:opacity-50 transition-colors duration-300 pulse-button send-button p-4"
+              className="bg-blue-500 text-white rounded-full send-button flex items-center justify-center transition-colors duration-300 hover:bg-blue-900"
             >
               <IoMdSend className="mx-auto" />
             </button>
