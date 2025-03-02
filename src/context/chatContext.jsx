@@ -44,7 +44,7 @@ export const ChatProvider = ({ children }) => {
         
         // Send to your backend
         const { data } = await axios.post(
-            `${import.meta.env.VITE_SERVER}chat/${selected}`,
+            `${import.meta.env.VITE_SERVER}/api/chat/${selected}`,
             {
                 questions: question,
                 answers: answer
@@ -71,7 +71,7 @@ export const ChatProvider = ({ children }) => {
   async function fetchChats() {
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_SERVER}chat/all`,
+        `${import.meta.env.VITE_SERVER}/api/chat/all`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -99,10 +99,10 @@ export const ChatProvider = ({ children }) => {
   async function createChat() {
     setCreateLod(true);
     try {
-      console.log("API URL:", `${import.meta.env.VITE_SERVER}chat/new`);
+      console.log("API URL:", `${import.meta.env.VITE_SERVER}/api/chat/new`);
 
       const { data } = await axios.post(
-        `${import.meta.env.VITE_SERVER}chat/new`,
+        `${import.meta.env.VITE_SERVER}/api/chat/new`,
         {},
         {
           headers: {
@@ -139,7 +139,7 @@ export const ChatProvider = ({ children }) => {
     
     setLoading(true);
     try {
-        const { data } = await axios.get(`${import.meta.env.VITE_SERVER}chat/${selected}`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_SERVER}/api/chat/${selected}`, {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
@@ -172,7 +172,7 @@ export const ChatProvider = ({ children }) => {
   async function deleteChat(id) {
     try {
       const { data } = await axios.delete(
-        `${import.meta.env.VITE_SERVER}chat/${id}`,
+        `${import.meta.env.VITE_SERVER}/api/chat/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

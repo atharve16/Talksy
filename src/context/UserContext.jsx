@@ -12,11 +12,11 @@ export const UserProvider = ({ children }) => {
   async function loginUser(email, navigate) {
     setBtnLoading(true);
     try {
-      console.log("Login URL:", `${import.meta.env.VITE_SERVER}user/login`);
+      console.log("Login URL:", `${import.meta.env.VITE_SERVER}/api/user/login`);
       console.log("Sending email:", email);
 
       const { data } = await axios.post(
-        `${import.meta.env.VITE_SERVER}user/login`,
+        `${import.meta.env.VITE_SERVER}/api/user/login`,
         { email }
       );
 
@@ -46,7 +46,7 @@ export const UserProvider = ({ children }) => {
 
     try {
       const { data } = await axios.post(
-        `${import.meta.env.VITE_SERVER}user/verify`,
+        `${import.meta.env.VITE_SERVER}/api/user/verify`,
         { verifyToken, otp }
       );
       toast.success(data.message);
@@ -66,7 +66,7 @@ export const UserProvider = ({ children }) => {
   async function fetchUser() {
     try {
       const { data } = await axios.get(
-        `${import.meta.env.VITE_SERVER}user/me`,
+        `${import.meta.env.VITE_SERVER}/api/user/me`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
