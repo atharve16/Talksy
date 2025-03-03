@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserData } from "../context/UserContext";
 import { LoadingSpinner } from "../component/Loading";
-import { ChatData } from "../context/ChatContext.jsx";
+import { ChatData } from "../context/chatContext.jsx";
 import { BsShieldLock, BsCheckCircle, BsArrowCounterclockwise } from "react-icons/bs";
 
 const Verify = () => {

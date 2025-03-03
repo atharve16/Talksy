@@ -1,5 +1,5 @@
 import React from "react";
-import { ChatData } from "../context/ChatContext";
+import { ChatData } from "../context/chatContext";
 import { MdDelete, MdAdd } from "react-icons/md";
 import { LoadingSpinner } from "./Loading";
 import toast from "react-hot-toast";

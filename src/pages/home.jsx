@@ -3,7 +3,7 @@ import SideBar from "../component/SideBar";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { IoCloseCircleSharp } from "react-icons/io5";
 import Header from "../component/Header";
-import { ChatData } from "../context/ChatContext";
+import { ChatData } from "../context/chatContext";
 import { CgProfile } from "react-icons/cg";
 import { BsRobot } from "react-icons/bs";
 import { LoadingSmall, LoadingBig } from "../component/Loading";
