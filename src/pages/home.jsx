@@ -45,118 +45,156 @@ const Home = () => {
   }, [messages]);
 
   return (
-    <div className="flex h-screen bg-slate-50 text-slate-700 relative overflow-hidden app-container">
+    <div className="flex h-screen bg-slate-50 text-slate-700 relative overflow-hidden">
+      {/* Sidebar */}
       <SideBar isOpen={isOpen} toggleSideBar={toggleSideBar} />
 
-      <div className="flex flex-1 flex-col relative">
+      {/* Main Content Area */}
+      <div className="flex flex-1 flex-col relative min-w-0">
+        {/* Mobile Menu Button */}
         <button
           onClick={toggleSideBar}
-          className="md:hidden p-3 text-2xl fixed top-4 right-4 z-10 bg-white bg-opacity-80 backdrop-blur-sm rounded-full shadow-lg transition-all duration-300 hover:bg-slate-100 text-blue-500"
+          className="md:hidden fixed top-4 right-4 z-50 p-3 text-2xl bg-white bg-opacity-90 backdrop-blur-sm rounded-full shadow-lg transition-all duration-300 hover:bg-slate-100 text-blue-500"
+          aria-label="Toggle sidebar"
         >
           {isOpen ? <IoCloseCircleSharp /> : <GiHamburgerMenu />}
         </button>
 
-        <div className="flex-1 p-3 md:p-4 pb-24 relative">
+        {/* Header */}
+        <div className="flex-shrink-0 px-4 pt-4 pb-2 md:px-6 md:pt-6 md:pb-4">
           <Header />
+        </div>
+
+        {/* Messages Container */}
+        <div className="flex-1 flex flex-col min-h-0 px-4 md:px-6">
           {loading ? (
-            <LoadingBig />
+            <div className="flex-1 flex items-center justify-center">
+              <LoadingBig />
+            </div>
           ) : (
             <div
-              className="flex-1 p-3 sm:max-h-[calc(115vh-220px)] max-h-[calc(105vh-220px)] overflow-y-auto thin-scrollbar message-container"
+              className="flex-1 overflow-y-auto thin-scrollbar pb-4"
               ref={messageContainerRef}
             >
               {messages && messages.length > 0 ? (
-                messages.map((e, i) => {
-                  return (
+                <div className="space-y-4 max-w-4xl mx-auto w-full">
+                  {messages.map((e, i) => (
                     <div
                       key={i}
-                      className="mb-5 message-animate"
+                      className="message-animate"
                       style={{ animationDelay: `${i * 0.1}s` }}
                     >
-                      <div className="mb-3 p-4 rounded-lg user-message flex items-start gap-3 bg-blue-50">
-                        <div className="avatar flex items-center justify-center rounded-full h-10 w-10 bg-blue-100">
-                          <CgProfile className="text-xl text-blue-600" />
-                        </div>
-                        <div className="flex-1 break-words message-text">
-                          {e.question}
+                      {/* User Message */}
+                      <div className="flex items-start gap-3 mb-4 justify-end">
+                        <div className="flex-1 max-w-[85%] sm:max-w-[75%] md:max-w-[70%]">
+                          <div className="p-3 sm:p-4 rounded-2xl bg-blue-50 border-l-4 border-blue-400 shadow-sm">
+                            <div className="flex items-start gap-3">
+                              <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <CgProfile className="text-lg sm:text-xl text-blue-600" />
+                              </div>
+                              <div className="flex-1 break-words text-sm sm:text-base">
+                                {e.question}
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
 
-                      <div className="mb-3 p-4 rounded-lg bot-message flex items-start gap-3 bg-slate-50">
-                        <div className="avatar bot-avatar flex items-center justify-center rounded-full p-2 h-10 w-10 bg-slate-200">
-                          <BsRobot className="text-xl text-slate-700" />
-                        </div>
-                        <div className="flex-1 break-words message-text">
-                          {e.answer}
+                      {/* Bot Message */}
+                      <div className="flex items-start gap-3 mb-6">
+                        <div className="flex-1 max-w-[85%] sm:max-w-[75%] md:max-w-[70%]">
+                          <div className="p-3 sm:p-4 rounded-2xl bg-white border-l-4 border-slate-300 shadow-sm">
+                            <div className="flex items-start gap-3">
+                              <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-slate-200 rounded-full flex items-center justify-center">
+                                <BsRobot className="text-lg sm:text-xl text-slate-700" />
+                              </div>
+                              <div className="flex-1 break-words text-sm sm:text-base">
+                                {e.answer}
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  );
-                })
+                  ))}
+                </div>
               ) : selected ? (
-                <div className="flex items-center justify-center h-64 text-center">
-                  <div className="empty-state p-6 backdrop-blur-sm transform transition-all duration-500 hover:scale-105 bg-white bg-opacity-80 rounded-lg shadow-sm">
-                    <div className="text-6xl mb-3 text-blue-400">
-                      <BsRobot className="mx-auto animate-pulse" />
+                <div className="flex-1 flex items-center justify-center p-4">
+                  <div className="text-center max-w-md mx-auto">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+                      <BsRobot className="text-2xl sm:text-3xl text-blue-500 animate-pulse" />
                     </div>
-                    <p className="text-xl text-slate-700 font-semibold">
-                      No messages in this chat yet.
-                    </p>
-                    <p className="text-slate-500 font-medium mt-2">
-                      Start a conversation!
+                    <h3 className="text-lg sm:text-xl font-semibold text-slate-700 mb-2">
+                      No messages yet
+                    </h3>
+                    <p className="text-sm sm:text-base text-slate-500">
+                      Start a conversation by typing a message below!
                     </p>
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-center h-64 text-center">
-                  <div className="empty-state p-6 backdrop-blur-sm transform transition-all duration-500 hover:scale-105 bg-white bg-opacity-80 rounded-lg shadow-sm">
-                    <p className="text-xl text-slate-700 font-semibold">
-                      No chat selected.
-                    </p>
-                    <p className="text-slate-500 font-medium mt-2">
-                      Please create or select a chat to start.
+                <div className="flex-1 flex items-center justify-center p-4">
+                  <div className="text-center max-w-md mx-auto">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-4 bg-slate-100 rounded-full flex items-center justify-center">
+                      <BsChatDots className="text-2xl sm:text-3xl text-slate-400" />
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-semibold text-slate-700 mb-2">
+                      No chat selected
+                    </h3>
+                    <p className="text-sm sm:text-base text-slate-500">
+                      Create or select a chat to start messaging
                     </p>
                   </div>
                 </div>
               )}
 
-              {newRequestLoading && <LoadingSmall />}
+              {newRequestLoading && (
+                <div className="max-w-4xl mx-auto w-full">
+                  <LoadingSmall />
+                </div>
+              )}
             </div>
           )}
         </div>
 
-        {/* Always render the input container, but make it conditionally visible */}
-        <div
-          className={`fixed bottom-5 right-0 left-0 md:left-auto p-4 w-full md:w-3/4 md:pr-6 z-10 
-             transition-opacity duration-300 ${
-               !selected || isOpen
-                 ? "opacity-0 pointer-events-none"
-                 : "opacity-100"
-             }`}
-        >
-          <form
-            onSubmit={submitHandler}
-            className="flex justify-center items-center bg-white bg-opacity-90 backdrop-blur-sm rounded-full shadow-lg overflow-hidden prompt-container border border-slate-100"
-          >
-            <input
-              className="flex-grow bg-transparent outline-none glow-input prompt-input p-3 px-5"
-              type="text"
-              placeholder="Enter your message here..."
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              disabled={!selected || newRequestLoading}
-              required
-            />
-            <button
-              type="submit"
-              disabled={!prompt.trim() || !selected || newRequestLoading}
-              className="bg-blue-500 text-white rounded-full send-button flex items-center justify-center transition-colors duration-300 hover:bg-blue-900"
-            >
-              <IoMdSend className="mx-auto" />
-            </button>
-          </form>
-        </div>
+        {/* Input Container */}
+        {selected && (
+          <div className="flex-shrink-0 p-4 md:p-6">
+            <div className="max-w-4xl mx-auto">
+              <form
+                onSubmit={submitHandler}
+                className="flex items-center gap-2 sm:gap-3 bg-white rounded-full shadow-lg border border-slate-200 p-2"
+              >
+                <input
+                  className="flex-1 bg-transparent outline-none px-4 py-3 text-sm sm:text-base placeholder-slate-400"
+                  type="text"
+                  placeholder="Type your message..."
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  disabled={!selected || newRequestLoading}
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={!prompt.trim() || !selected || newRequestLoading}
+                  className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 hover:bg-blue-600 disabled:bg-slate-300 text-white rounded-full flex items-center justify-center transition-colors duration-200"
+                  aria-label="Send message"
+                >
+                  <IoMdSend className="text-lg" />
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Overlay for mobile sidebar */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          onClick={toggleSideBar}
+        />
+      )}
     </div>
   );
 };
