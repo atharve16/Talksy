@@ -5,6 +5,8 @@ import { Toaster } from "react-hot-toast";
 
 const UserContext = createContext();
 
+const BASE_URL = "https://talksy-backend-code.onrender.com/api";
+
 export const UserProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [btnLoading, setBtnLoading] = useState(false);
@@ -12,11 +14,11 @@ export const UserProvider = ({ children }) => {
   async function loginUser(email, navigate) {
     setBtnLoading(true);
     try {
-      console.log("Login URL:", `https://talksy-backend-code.onrender.com/api/user/login`);
+      console.log("Login URL:", `${BASE_URL}/user/login`);
       console.log("Sending email:", email);
 
       const { data } = await axios.post(
-        `https://talksy-backend-code.onrender.com/api/user/login`,
+        `${BASE_URL}/user/login`,
         { email }
       );
 
@@ -46,7 +48,7 @@ export const UserProvider = ({ children }) => {
 
     try {
       const { data } = await axios.post(
-        `https://talksy-backend-code.onrender.com/api/user/verify`,
+        `${BASE_URL}/user/verify`,
         { verifyToken, otp }
       );
       toast.success(data.message);
@@ -66,7 +68,7 @@ export const UserProvider = ({ children }) => {
   async function fetchUser() {
     try {
       const { data } = await axios.get(
-        `https://talksy-backend-code.onrender.com/api/user/me`,
+        `${BASE_URL}/user/me`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
