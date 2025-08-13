@@ -5,7 +5,7 @@ import { IoCloseCircleSharp } from "react-icons/io5";
 import Header from "../component/Header";
 import { ChatData } from "../context/chatContext";
 import { CgProfile } from "react-icons/cg";
-import { BsRobot } from "react-icons/bs";
+import { BsRobot, BsChatDots } from "react-icons/bs";
 import { LoadingSmall, LoadingBig } from "../component/Loading";
 import { IoMdSend } from "react-icons/io";
 
